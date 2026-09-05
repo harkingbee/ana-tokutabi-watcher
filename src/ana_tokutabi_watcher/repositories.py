@@ -52,6 +52,29 @@ def get_latest_snapshot(session: Session) -> CampaignSnapshot | None:
     return session.execute(stmt).scalars().first()
 
 
+def list_snapshots(session: Session, limit: int = 50) -> list[CampaignSnapshot]:
+    """新しい順にスナップショットを返す（複数週が同時に存在しうるため一覧取得用）。"""
+    stmt = select(CampaignSnapshot).order_by(CampaignSnapshot.id.desc()).limit(limit)
+    return list(session.execute(stmt).scalars().all())
+
+
+def get_snapshot_by_travel_period_and_hash(
+    session: Session, travel_start: object, travel_end: object, raw_hash: str
+) -> CampaignSnapshot | None:
+    """同じ搭乗期間・同じページ内容(raw_hash)のスナップショットが既にあるか調べる（重複保存防止用）。"""
+    stmt = (
+        select(CampaignSnapshot)
+        .where(
+            CampaignSnapshot.travel_start == travel_start,
+            CampaignSnapshot.travel_end == travel_end,
+            CampaignSnapshot.raw_hash == raw_hash,
+        )
+        .order_by(CampaignSnapshot.id.desc())
+        .limit(1)
+    )
+    return session.execute(stmt).scalars().first()
+
+
 def get_routes_for_snapshot(session: Session, snapshot_id: int) -> list[TokuTabiRoute]:
     stmt = select(TokuTabiRoute).where(TokuTabiRoute.campaign_snapshot_id == snapshot_id)
     return list(session.execute(stmt).scalars().all())
