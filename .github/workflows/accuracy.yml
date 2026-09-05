@@ -48,7 +48,7 @@ jobs:
           retention-days: 30
       - name: Create issue on parser failure
         if: failure()
-        uses: peter-evans/create-issue-from-file@v5
+        uses: peter-evans/create-issue-from-file@v6
         with:
           title: "パーサー精度低下: ライブページ解析に失敗"
           content-filepath: .github/PARSER_FAILURE_TEMPLATE.md
