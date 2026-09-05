@@ -34,7 +34,7 @@ def setup_logging(level: str = "INFO", fmt: str = "json") -> None:
         )
 
 
-def get_logger(name: str):  # type: ignore[no-untyped-def]
+def get_logger(name: str):
     try:
         import structlog
 

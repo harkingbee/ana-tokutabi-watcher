@@ -52,7 +52,7 @@ def test_live_osaka_normalization():
     # 正規化で大阪発着が正しく構築される
     for r in normalized:
         assert r["origin_area"] == "大阪"
-        assert r["origin_airports"] == ["ITM", "KIX", "UKB"]
+        assert r["origin_airports"] == ["ITM"]
         assert r["miles"] in (3500, 5500, 6500, 7500)
 
 

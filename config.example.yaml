@@ -5,8 +5,6 @@ availability_mode: "safe_link_only"
 monitor:
   origins:
     - "ITM"
-    - "KIX"
-    - "UKB"
   trip_type: "one_way"
   departure_time_start: "06:00"
   departure_time_end: "21:00"

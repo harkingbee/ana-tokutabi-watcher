@@ -8,6 +8,7 @@ import httpx
 
 from ana_tokutabi_watcher.logging_config import get_logger
 from ana_tokutabi_watcher.services.availability_checker import AvailabilityResult
+from ana_tokutabi_watcher.utils.dates import format_date_with_weekday
 
 logger = get_logger(__name__)
 JST = ZoneInfo("Asia/Tokyo")
@@ -20,7 +21,7 @@ def build_discord_embed(
 ) -> dict:
     now_jst = datetime.now(JST).strftime("%Y-%m-%d %H:%M JST")
     route_label = f"{result.origin} ⇔ {result.destination_name or result.destination}"
-    travel_date_str = result.travel_date.isoformat()
+    travel_date_str = format_date_with_weekday(result.travel_date)
 
     fields = [
         {"name": "路線", "value": route_label, "inline": True},

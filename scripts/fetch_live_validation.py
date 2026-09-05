@@ -11,7 +11,7 @@ import argparse
 import hashlib
 import json
 import sys
-from datetime import date, datetime
+from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -19,9 +19,9 @@ from zoneinfo import ZoneInfo
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 import httpx
+
 from ana_tokutabi_watcher.services.route_normalizer import normalize_all_osaka_routes
 from ana_tokutabi_watcher.services.toku_tabi_parser import extract_all_campaign_blocks, parse_campaign_html
-from ana_tokutabi_watcher.utils.dates import parse_period
 
 JST = ZoneInfo("Asia/Tokyo")
 ANA_URL = "https://www.ana.co.jp/ja/jp/guide/amc/award/domestic/toku-tabi/"
@@ -82,13 +82,18 @@ def main() -> None:
 
     # 大阪正規化
     normalized = normalize_all_osaka_routes(parsed.routes_by_miles, parsed.travel_start, parsed.travel_end)
-    print(f"[parse] booking={parsed.booking_start} travel={parsed.travel_start} routes={len(parsed.all_route_texts)} osaka={len(parsed.osaka_route_texts)} normalized={len(normalized)}")
+    print(
+        f"[parse] booking={parsed.booking_start} travel={parsed.travel_start} "
+        f"routes={len(parsed.all_route_texts)} osaka={len(parsed.osaka_route_texts)} "
+        f"normalized={len(normalized)}"
+    )
 
     # ブロック分解の精度チェック
     blocks = extract_all_campaign_blocks(html)
     print(f"[parse] blocks={len(blocks)}")
     for b in blocks:
-        print(f"  block booking={b['booking_start']} travel={b['travel_start']} miles={list(b['routes_by_miles'].keys()) if b['routes_by_miles'] else []}")
+        miles_keys = list(b["routes_by_miles"].keys()) if b["routes_by_miles"] else []
+        print(f"  block booking={b['booking_start']} travel={b['travel_start']} miles={miles_keys}")
 
     # GitHub Actions 出力用のJSON
     result = {

@@ -10,7 +10,7 @@ def test_normalize_osaka_route_basic():
     r = normalize_osaka_route("大阪⇔札幌（新千歳）", 5500, date(2026, 4, 9), date(2026, 4, 15))
     assert r is not None
     assert r["origin_area"] == "大阪"
-    assert r["origin_airports"] == ["ITM", "KIX", "UKB"]
+    assert r["origin_airports"] == ["ITM"]
     assert r["destination_name"] == "札幌（新千歳）"
     assert r["destination_airports"] == ["CTS"]
     assert r["miles"] == 5500

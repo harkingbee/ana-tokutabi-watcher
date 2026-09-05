@@ -11,7 +11,7 @@ class BrowserAvailabilityClient:
     def __init__(self, enabled: bool = False) -> None:
         self.enabled = enabled
 
-    def check(self, *args, **kwargs):  # type: ignore[no-untyped-def]
+    def check(self, *args, **kwargs):
         if not self.enabled:
             logger.warning("browser_availability_disabled_fallback_to_safe")
             return None

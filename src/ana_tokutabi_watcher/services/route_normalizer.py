@@ -25,7 +25,7 @@ CITY_TO_AIRPORTS: dict[str, list[str]] = {
     "東京": ["HND", "NRT"],
     "羽田": ["HND"],
     "成田": ["NRT"],
-    "大阪": ["ITM", "KIX", "UKB"],
+    "大阪": ["ITM"],  # 本ツールでは大阪発着は伊丹空港(ITM)のみを監視対象とする
     "伊丹": ["ITM"],
     "関西": ["KIX"],
     "神戸": ["UKB"],
@@ -61,8 +61,8 @@ CITY_TO_AIRPORTS: dict[str, list[str]] = {
     "宮古": ["MMY"],
 }
 
-# 大阪として扱う空港
-OSAKA_AIRPORTS = ["ITM", "KIX", "UKB"]
+# 大阪として扱う空港（関西空港/神戸空港は対象外、伊丹空港のみ）
+OSAKA_AIRPORTS = ["ITM"]
 OSAKA_LABEL = "大阪"
 
 

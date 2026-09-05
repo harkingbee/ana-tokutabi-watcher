@@ -17,7 +17,7 @@ AIRPORT_CODE_MAP: dict[str, list[str]] = {
     "東京": ["HND", "NRT"],
     "羽田": ["HND"],
     "成田": ["NRT"],
-    "大阪": ["ITM", "KIX", "UKB"],
+    "大阪": ["ITM"],
     "伊丹": ["ITM"],
     "関西": ["KIX"],
     "神戸": ["UKB"],

@@ -10,7 +10,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class MonitorConfig(BaseModel):
-    origins: list[str] = Field(default_factory=lambda: ["ITM", "KIX", "UKB"])
+    origins: list[str] = Field(default_factory=lambda: ["ITM"])
     trip_type: Literal["one_way", "round_trip"] = "one_way"
     departure_time_start: str = "06:00"
     departure_time_end: str = "21:00"
@@ -97,7 +97,7 @@ def load_config(config_path: str | Path | None = None) -> AppConfig:
 
 
 def get_discord_webhook_url(config: AppConfig) -> str:
-    env = EnvSettings()  # type: ignore[call-arg]
+    env = EnvSettings()
     # 環境変数名はconfigで可変
     key = config.discord.webhook_url_env
     if key == "DISCORD_WEBHOOK_URL":
@@ -106,12 +106,12 @@ def get_discord_webhook_url(config: AppConfig) -> str:
 
 
 def get_database_url() -> str:
-    env = EnvSettings()  # type: ignore[call-arg]
+    env = EnvSettings()
     return env.database_url
 
 
 def get_log_level(config: AppConfig) -> str:
-    env = EnvSettings()  # type: ignore[call-arg]
+    env = EnvSettings()
     # 環境変数が設定されていればそちらを優先
     if os.getenv("LOG_LEVEL"):
         return env.log_level
@@ -119,7 +119,7 @@ def get_log_level(config: AppConfig) -> str:
 
 
 def get_log_format(config: AppConfig) -> str:
-    env = EnvSettings()  # type: ignore[call-arg]
+    env = EnvSettings()
     if os.getenv("LOG_FORMAT"):
         return env.log_format
     return config.logging.format

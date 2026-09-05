@@ -13,7 +13,7 @@ logger = get_logger(__name__)
 JST = ZoneInfo("Asia/Tokyo")
 
 
-def create_scheduler(config: AppConfig, fetch_fn, check_fn) -> BackgroundScheduler:  # type: ignore[no-untyped-def]
+def create_scheduler(config: AppConfig, fetch_fn, check_fn) -> BackgroundScheduler:
     scheduler = BackgroundScheduler(timezone=config.timezone)
 
     # 水曜の路線取得ジョブ

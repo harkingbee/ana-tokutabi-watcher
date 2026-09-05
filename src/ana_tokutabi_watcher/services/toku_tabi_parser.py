@@ -75,9 +75,9 @@ def _parse_periods(text: str) -> dict[str, tuple[date | None, date | None]]:
     if "booking" not in result or "travel" not in result:
         periods = extract_all_periods(text)
         # 「20YY年MM月DD日」のダミー期間を除外
-        filtered = [(s, e) for s, e in periods if s.year != 20 or e.year != 20]
+        filtered_periods = [(s, e) for s, e in periods if s.year != 20 or e.year != 20]
         # ダミーが混ざっている場合は除外後のリストを優先
-        candidates = filtered if filtered else periods
+        candidates = filtered_periods if filtered_periods else periods
         if candidates:
             if "booking" not in result and len(candidates) >= 1:
                 result["booking"] = candidates[0]
@@ -162,6 +162,7 @@ def extract_all_campaign_blocks(
 def parse_campaign_html(html: str) -> ParsedCampaign:
     soup = BeautifulSoup(html, "lxml")
     text = _extract_text(soup)
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
     raw_hash = hashlib.sha256(html.encode("utf-8")).hexdigest()
 
     # 見出し一覧（診断用）
@@ -221,7 +222,6 @@ def parse_campaign_html(html: str) -> ParsedCampaign:
 
     # テキストベース抽出はHTML抽出が不十分な場合のみ実行（重複回避）
     if len(all_route_texts) < 5:
-        lines = [line.strip() for line in text.splitlines() if line.strip()]
         mile_indices: list[tuple[int, int]] = []
         for idx, line in enumerate(lines):
             m = RE_MILES.search(line)
@@ -265,30 +265,30 @@ def parse_campaign_html(html: str) -> ParsedCampaign:
     # フォールバック: HTML構造抽出で空の場合のみテキストベース抽出
     if not routes_by_miles:
         # 方法1: マイル見出しを順に走査し、次のマイル見出しまでの路線を収集
-        mile_indices: list[tuple[int, int]] = []
+        fallback2_mile_indices: list[tuple[int, int]] = []
         for idx, line in enumerate(lines):
             m = RE_MILES.search(line)
             if m:
                 miles_val = int(m.group(1).replace(",", ""))
                 if 2000 <= miles_val <= 15000:
-                    mile_indices.append((idx, miles_val))
-        for mi, (start_idx, miles_val) in enumerate(mile_indices):
-            end_idx = mile_indices[mi + 1][0] if mi + 1 < len(mile_indices) else len(lines)
+                    fallback2_mile_indices.append((idx, miles_val))
+        for mi, (start_idx, miles_val) in enumerate(fallback2_mile_indices):
+            end_idx = fallback2_mile_indices[mi + 1][0] if mi + 1 < len(fallback2_mile_indices) else len(lines)
             segment = lines[start_idx + 1 : end_idx]
-            routes: list[str] = []
+            fallback2_routes: list[str] = []
             for line in segment:
                 if "⇔" in line or "～" in line or "→" in line:
                     if len(line) < 120 and len(line) > 2:
                         if re.search(r"[ぁ-んァ-ン一-龥]", line):
-                            routes.append(line.strip())
+                            fallback2_routes.append(line.strip())
                             all_route_texts.append(line.strip())
                 elif "大阪" in line and len(line) < 80:
                     if not any(kw in line for kw in ["マイル", "期間", "予約", "搭乗", "ご案内"]):
-                        if line.strip() not in routes:
-                            routes.append(line.strip())
+                        if line.strip() not in fallback2_routes:
+                            fallback2_routes.append(line.strip())
                             all_route_texts.append(line.strip())
-            if routes:
-                routes_by_miles.setdefault(miles_val, []).extend(routes)
+            if fallback2_routes:
+                routes_by_miles.setdefault(miles_val, []).extend(fallback2_routes)
     # それでも空なら「大阪⇔」のみ抽出
     if not routes_by_miles:
         for line in lines:
@@ -308,13 +308,13 @@ def parse_campaign_html(html: str) -> ParsedCampaign:
             for b in blocks:
                 if b.get("travel_start") == travel_start and b.get("booking_start") == booking_start:
                     # 該当ブロックの路線で上書き（ブロック内の路線がより正確）
-                    block_routes = b.get("routes_by_miles")  # type: ignore[assignment]
-                    if block_routes:
+                    block_routes = b.get("routes_by_miles")
+                    if isinstance(block_routes, dict):
                         # ブロック内の路線は既に正確に分離されているため採用
                         # ただしブロック内の路線が空の場合はマージ結果を保持
                         filtered_routes: dict[int, list[str]] = {}
-                        for miles, rts in block_routes.items():  # type: ignore[union-attr]
-                            filtered_routes[miles] = rts  # type: ignore[assignment]
+                        for miles, rts in block_routes.items():
+                            filtered_routes[miles] = rts
                         # ブロック採用時は全路線と大阪路線を再構築
                         if any(filtered_routes.values()):
                             routes_by_miles = filtered_routes

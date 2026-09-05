@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from ana_tokutabi_watcher.models import Base
 
 
-def get_engine(database_url: str):  # type: ignore[no-untyped-def]
+def get_engine(database_url: str):
     # SQLiteファイルの親ディレクトリを作成
     if database_url.startswith("sqlite"):
         # sqlite:///./data/ana_tokutabi.db -> ./data/ana_tokutabi.db

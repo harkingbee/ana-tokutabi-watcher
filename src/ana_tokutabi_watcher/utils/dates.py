@@ -115,6 +115,16 @@ def now_jst() -> datetime:
     return datetime.now(JST)
 
 
+_WEEKDAY_JA = ["月", "火", "水", "木", "金", "土", "日"]
+
+
+def format_date_with_weekday(value: date | None) -> str:
+    """日付を「YYYY-MM-DD（曜）」の形式にする。None の場合は「不明」を返す。"""
+    if value is None:
+        return "不明"
+    return f"{value.isoformat()}（{_WEEKDAY_JA[value.weekday()]}）"
+
+
 def is_within_booking_window(now: date, booking_start: date | None, booking_end: date | None) -> bool:
     if booking_start is None or booking_end is None:
         return True  # 不明なら監視を継続（安全側）

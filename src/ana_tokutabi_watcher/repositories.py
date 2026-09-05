@@ -24,10 +24,10 @@ def save_campaign_snapshot(
 ) -> CampaignSnapshot:
     snap = CampaignSnapshot(
         fetched_at=datetime.now(UTC),
-        booking_start=booking_start,  # type: ignore[arg-type]
-        booking_end=booking_end,  # type: ignore[arg-type]
-        travel_start=travel_start,  # type: ignore[arg-type]
-        travel_end=travel_end,  # type: ignore[arg-type]
+        booking_start=booking_start,
+        booking_end=booking_end,
+        travel_start=travel_start,
+        travel_end=travel_end,
         raw_hash=raw_hash,
     )
     session.add(snap)

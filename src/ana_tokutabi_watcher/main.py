@@ -40,7 +40,7 @@ from ana_tokutabi_watcher.services.notification_deduplicator import (
 )
 from ana_tokutabi_watcher.services.route_normalizer import normalize_all_osaka_routes
 from ana_tokutabi_watcher.services.toku_tabi_parser import parse_campaign_html
-from ana_tokutabi_watcher.utils.dates import generate_dates
+from ana_tokutabi_watcher.utils.dates import format_date_with_weekday, generate_dates
 
 JST = ZoneInfo("Asia/Tokyo")
 app = typer.Typer(add_completion=False, help="ANAトクたびマイル 大阪発着監視 CLI")
@@ -158,8 +158,14 @@ def show_routes(
         routes = get_routes_for_snapshot(session, snap.id)
         print(f"スナップショットID: {snap.id}")
         print(f"取得時刻: {snap.fetched_at}")
-        print(f"予約発券期間: {snap.booking_start} 〜 {snap.booking_end}")
-        print(f"対象搭乗期間: {snap.travel_start} 〜 {snap.travel_end}")
+        print(
+            f"予約発券期間: {format_date_with_weekday(snap.booking_start)} 〜 "
+            f"{format_date_with_weekday(snap.booking_end)}"
+        )
+        print(
+            f"対象搭乗期間: {format_date_with_weekday(snap.travel_start)} 〜 "
+            f"{format_date_with_weekday(snap.travel_end)}"
+        )
         print(f"路線数: {len(routes)}")
         print("-" * 60)
         for r in routes:
