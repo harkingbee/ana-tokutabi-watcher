@@ -1,0 +1,14 @@
+services:
+  ana-tokutabi-watcher:
+    build: .
+    container_name: ana-tokutabi-watcher
+    volumes:
+      - ./data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+      - ./.env:/app/.env:ro
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Tokyo
+    restart: unless-stopped
+    command: ["ana-tokutabi", "run-scheduler"]

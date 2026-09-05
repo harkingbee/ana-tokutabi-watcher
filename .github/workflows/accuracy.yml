@@ -1,0 +1,55 @@
+name: Accuracy Check (Live Page)
+
+on:
+  schedule:
+    # 毎日 00:30 JST = 15:30 UTC 前日に実行（GitHub cronはUTC）
+    - cron: "30 15 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/ana_tokutabi_watcher/services/toku_tabi_parser.py"
+      - "src/ana_tokutabi_watcher/utils/dates.py"
+      - "tests/fixtures/live_ana_20260904.html"
+      - ".github/workflows/accuracy.yml"
+
+jobs:
+  live-accuracy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install uv
+        run: pip install uv
+      - name: Install dependencies
+        run: uv pip install --system -e ".[dev]"
+      - name: Run pytest (including live fixture)
+        run: pytest -v
+      - name: Fetch live ANA page and validate parser
+        env:
+          PYTHONPATH: src
+        run: |
+          python scripts/fetch_live_validation.py --output live_snapshot.json --html live_snapshot.html
+          cat live_snapshot.json
+      - name: Upload live snapshot artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-snapshot-${{ github.run_number }}
+          path: |
+            live_snapshot.json
+            live_snapshot.html
+          retention-days: 30
+      - name: Create issue on parser failure
+        if: failure()
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "パーサー精度低下: ライブページ解析に失敗"
+          content-filepath: .github/PARSER_FAILURE_TEMPLATE.md
+          labels: bug,parser

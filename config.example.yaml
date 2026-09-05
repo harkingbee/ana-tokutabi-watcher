@@ -1,0 +1,44 @@
+timezone: "Asia/Tokyo"
+campaign_url: "https://www.ana.co.jp/ja/jp/guide/amc/award/domestic/toku-tabi/"
+availability_mode: "safe_link_only"
+
+monitor:
+  origins:
+    - "ITM"
+    - "KIX"
+    - "UKB"
+  trip_type: "one_way"
+  departure_time_start: "06:00"
+  departure_time_end: "21:00"
+  destination_allowlist: []
+  destination_blocklist: []
+  max_notifications_per_run: 20
+  resend_after_hours: 24
+  dry_run: false
+
+schedule:
+  weekly_route_fetch:
+    day_of_week: "wed"
+    hour: 0
+    minute: 0
+    retries:
+      - "00:01"
+      - "00:05"
+      - "00:15"
+  availability_check:
+    enabled_during_booking_window_only: true
+    minute: 0
+
+rate_limit:
+  min_seconds_between_requests: 10
+  max_requests_per_run: 30
+  retry_max_attempts: 3
+
+discord:
+  enabled: true
+  username: "ANAトクたび監視"
+  webhook_url_env: "DISCORD_WEBHOOK_URL"
+
+logging:
+  level: "INFO"
+  format: "json"
