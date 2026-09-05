@@ -62,9 +62,7 @@ def get_notification_record(session: Session, key: str) -> NotificationRecord | 
     return session.execute(stmt).scalars().first()
 
 
-def upsert_notification_record(
-    session: Session, key: str, now: datetime, status: str = "sent"
-) -> NotificationRecord:
+def upsert_notification_record(session: Session, key: str, now: datetime, status: str = "sent") -> NotificationRecord:
     rec = get_notification_record(session, key)
     if rec:
         rec.last_sent_at = now

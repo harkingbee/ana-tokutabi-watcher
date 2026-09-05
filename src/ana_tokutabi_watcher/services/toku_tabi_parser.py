@@ -65,11 +65,7 @@ def _parse_periods(text: str) -> dict[str, tuple[date | None, date | None]]:
                                 result[key] = (s2, e2)
                                 break
                         if pos + offset + 1 < len(filtered_texts):
-                            combined = (
-                                filtered_texts[pos + offset]
-                                + "から"
-                                + filtered_texts[pos + offset + 1]
-                            )
+                            combined = filtered_texts[pos + offset] + "から" + filtered_texts[pos + offset + 1]
                             s3, e3 = parse_period(combined)
                             if s3 and e3:
                                 result[key] = (s3, e3)
@@ -88,11 +84,7 @@ def _parse_periods(text: str) -> dict[str, tuple[date | None, date | None]]:
             if "travel" not in result:
                 if len(candidates) >= 2:
                     result["travel"] = candidates[1]
-                elif (
-                    len(candidates) == 1
-                    and "booking" in result
-                    and candidates[0] != result["booking"]
-                ):
+                elif len(candidates) == 1 and "booking" in result and candidates[0] != result["booking"]:
                     result["travel"] = candidates[0]
 
     # 実ページでは2つのキャンペーンブロック（9/2-9/8 と 9/9-9/15）が同居する
@@ -263,10 +255,7 @@ def parse_campaign_html(html: str) -> ParsedCampaign:
                             routes.append(line.strip())
                             all_route_texts.append(line.strip())
                 elif "大阪" in line and len(line) < 80:
-                    if not any(
-                        kw in line
-                        for kw in ["マイル", "期間", "予約", "搭乗", "ご案内", "変更", "可能"]
-                    ):
+                    if not any(kw in line for kw in ["マイル", "期間", "予約", "搭乗", "ご案内", "変更", "可能"]):
                         if line.strip() not in routes:
                             routes.append(line.strip())
                             all_route_texts.append(line.strip())
@@ -317,10 +306,7 @@ def parse_campaign_html(html: str) -> ParsedCampaign:
         blocks = extract_all_campaign_blocks(html)
         if blocks and travel_start and booking_start:
             for b in blocks:
-                if (
-                    b.get("travel_start") == travel_start
-                    and b.get("booking_start") == booking_start
-                ):
+                if b.get("travel_start") == travel_start and b.get("booking_start") == booking_start:
                     # 該当ブロックの路線で上書き（ブロック内の路線がより正確）
                     block_routes = b.get("routes_by_miles")  # type: ignore[assignment]
                     if block_routes:

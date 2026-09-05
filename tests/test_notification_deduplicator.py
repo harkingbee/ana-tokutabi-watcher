@@ -40,19 +40,9 @@ def test_should_notify_duplicate_within_window():
     now = datetime.now(JST)
     mark_notified(session, key, "link_only", now=now)
     # 1時間後は再通知しない
-    assert (
-        should_notify(
-            session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=1)
-        )
-        is False
-    )
+    assert should_notify(session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=1)) is False
     # 25時間後は再通知する
-    assert (
-        should_notify(
-            session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=25)
-        )
-        is True
-    )
+    assert should_notify(session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=25)) is True
 
 
 def test_status_change_none_to_available_notifies_immediately():
@@ -61,15 +51,5 @@ def test_status_change_none_to_available_notifies_immediately():
     now = datetime.now(JST)
     mark_notified(session, key, "unavailable", now=now)
     # 1時間後でも available になれば通知
-    assert (
-        should_notify(
-            session, key, "available", resend_after_hours=24, now=now + timedelta(hours=1)
-        )
-        is True
-    )
-    assert (
-        should_notify(
-            session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=1)
-        )
-        is True
-    )
+    assert should_notify(session, key, "available", resend_after_hours=24, now=now + timedelta(hours=1)) is True
+    assert should_notify(session, key, "link_only", resend_after_hours=24, now=now + timedelta(hours=1)) is True

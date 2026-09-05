@@ -16,6 +16,4 @@ class BrowserAvailabilityClient:
             logger.warning("browser_availability_disabled_fallback_to_safe")
             return None
         # CAPTCHA/bot検知が出たら即停止してsafeへフォールバックする設計
-        raise NotImplementedError(
-            "browser_public_only は現在無効です。safe_link_only を使用してください。"
-        )
+        raise NotImplementedError("browser_public_only は現在無効です。safe_link_only を使用してください。")

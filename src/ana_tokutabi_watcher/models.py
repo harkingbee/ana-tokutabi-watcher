@@ -20,18 +20,14 @@ class CampaignSnapshot(Base):
     travel_start: Mapped[date | None] = mapped_column(Date, nullable=True)
     travel_end: Mapped[date | None] = mapped_column(Date, nullable=True)
     raw_hash: Mapped[str] = mapped_column(String(64), nullable=False)
-    routes: Mapped[list[TokuTabiRoute]] = relationship(
-        back_populates="campaign", cascade="all, delete-orphan"
-    )
+    routes: Mapped[list[TokuTabiRoute]] = relationship(back_populates="campaign", cascade="all, delete-orphan")
 
 
 class TokuTabiRoute(Base):
     __tablename__ = "toku_tabi_routes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    campaign_snapshot_id: Mapped[int] = mapped_column(
-        ForeignKey("campaign_snapshots.id"), nullable=False
-    )
+    campaign_snapshot_id: Mapped[int] = mapped_column(ForeignKey("campaign_snapshots.id"), nullable=False)
     origin: Mapped[str] = mapped_column(String(32), nullable=False)  # e.g. 大阪
     destination: Mapped[str] = mapped_column(String(64), nullable=False)  # e.g. 札幌（新千歳）
     destination_code: Mapped[str | None] = mapped_column(String(16), nullable=True)

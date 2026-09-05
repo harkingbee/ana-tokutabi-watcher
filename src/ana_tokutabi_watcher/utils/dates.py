@@ -115,9 +115,7 @@ def now_jst() -> datetime:
     return datetime.now(JST)
 
 
-def is_within_booking_window(
-    now: date, booking_start: date | None, booking_end: date | None
-) -> bool:
+def is_within_booking_window(now: date, booking_start: date | None, booking_end: date | None) -> bool:
     if booking_start is None or booking_end is None:
         return True  # 不明なら監視を継続（安全側）
     return booking_start <= now <= booking_end

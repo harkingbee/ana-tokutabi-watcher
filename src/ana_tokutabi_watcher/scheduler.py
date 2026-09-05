@@ -33,9 +33,7 @@ def create_scheduler(config: AppConfig, fetch_fn, check_fn) -> BackgroundSchedul
             hh, mm = t.split(":")
             scheduler.add_job(
                 fetch_fn,
-                trigger=CronTrigger(
-                    day_of_week=w.day_of_week, hour=int(hh), minute=int(mm), timezone=JST
-                ),
+                trigger=CronTrigger(day_of_week=w.day_of_week, hour=int(hh), minute=int(mm), timezone=JST),
                 id=f"weekly_route_fetch_retry_{idx}",
                 max_instances=1,
                 coalesce=True,
@@ -58,9 +56,7 @@ def create_scheduler(config: AppConfig, fetch_fn, check_fn) -> BackgroundSchedul
     return scheduler
 
 
-def is_booking_window_active(
-    booking_start: date | None, booking_end: date | None, today: date | None = None
-) -> bool:
+def is_booking_window_active(booking_start: date | None, booking_end: date | None, today: date | None = None) -> bool:
     if booking_start is None or booking_end is None:
         return True
     if today is None:

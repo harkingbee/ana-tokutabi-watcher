@@ -44,9 +44,7 @@ class SafeLinkOnlyAvailabilityChecker:
         travel_date: date,
         miles: int,
     ) -> AvailabilityResult:
-        url = build_safe_search_url(
-            origin=origin, destination=destination, travel_date=travel_date, miles=miles
-        )
+        url = build_safe_search_url(origin=origin, destination=destination, travel_date=travel_date, miles=miles)
         summary = f"{origin}→{destination} {travel_date.isoformat()} {miles}マイル (要手動確認)"
         return AvailabilityResult(
             origin=origin,
@@ -78,6 +76,4 @@ class BrowserAvailabilityChecker:
         if not self.enabled:
             return self._fallback.check(origin, destination, destination_name, travel_date, miles)
         # CAPTCHA/bot検知時は即時フォールバック
-        raise NotImplementedError(
-            "browser_public_only は未実装です。safe_link_only を使用してください。"
-        )
+        raise NotImplementedError("browser_public_only は未実装です。safe_link_only を使用してください。")

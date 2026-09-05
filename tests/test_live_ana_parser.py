@@ -9,9 +9,7 @@ from ana_tokutabi_watcher.utils.dates import parse_period
 
 
 def test_live_fixture_parses_correctly():
-    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(
-        encoding="utf-8"
-    )
+    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(encoding="utf-8")
     parsed = parse_campaign_html(html)
     # 実ページでは 2026-08-26 予約、09-02 搭乗が現行
     assert parsed.booking_start is not None
@@ -24,15 +22,11 @@ def test_live_fixture_parses_correctly():
     # 大阪関連が7件以上（東京⇔大阪含む）
     assert len(parsed.osaka_route_texts) >= 7
     assert "大阪⇔福岡" in parsed.osaka_route_texts
-    assert (
-        "大阪⇔札幌（新千歳）" in parsed.osaka_route_texts or "大阪⇔秋田" in parsed.osaka_route_texts
-    )
+    assert "大阪⇔札幌（新千歳）" in parsed.osaka_route_texts or "大阪⇔秋田" in parsed.osaka_route_texts
 
 
 def test_live_blocks_extraction():
-    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(
-        encoding="utf-8"
-    )
+    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(encoding="utf-8")
     blocks = extract_all_campaign_blocks(html)
     # 少なくとも2ブロック（9/2搭乗分と9/9搭乗分）が検出される
     assert len(blocks) >= 2
@@ -45,19 +39,13 @@ def test_live_blocks_extraction():
             assert 3500 in b["routes_by_miles"]
             assert any("大阪⇔福岡" in r for r in b["routes_by_miles"][3500])
         if b["travel_start"] and str(b["travel_start"]) == "2026-09-09":
-            assert any(
-                "大阪⇔札幌（新千歳）" in r for lst in b["routes_by_miles"].values() for r in lst
-            )
+            assert any("大阪⇔札幌（新千歳）" in r for lst in b["routes_by_miles"].values() for r in lst)
 
 
 def test_live_osaka_normalization():
-    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(
-        encoding="utf-8"
-    )
+    html = (Path(__file__).parent / "fixtures" / "live_ana_20260904.html").read_text(encoding="utf-8")
     parsed = parse_campaign_html(html)
-    normalized = normalize_all_osaka_routes(
-        parsed.routes_by_miles, parsed.travel_start, parsed.travel_end
-    )
+    normalized = normalize_all_osaka_routes(parsed.routes_by_miles, parsed.travel_start, parsed.travel_end)
     assert len(normalized) >= 5
     dests = {r["destination_name"] for r in normalized}
     assert "福岡" in dests

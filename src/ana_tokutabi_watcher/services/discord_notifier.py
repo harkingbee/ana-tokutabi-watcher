@@ -36,10 +36,7 @@ def build_discord_embed(
 
     description = "空席・必要マイルは変動するため、ANA公式サイトで最終確認してください。"
     if is_safe_mode or result.status == "link_only":
-        description = (
-            "自動空席確認は行わず、対象路線を検出しました。リンク先で空席をご確認ください。\n"
-            + description
-        )
+        description = "自動空席確認は行わず、対象路線を検出しました。リンク先で空席をご確認ください。\n" + description
         title = "ANAトクたびマイル：対象路線を検知（要手動確認）"
         color = 0x3498DB  # blue
     elif result.status == "available":
@@ -103,9 +100,7 @@ def send_discord_notification(
         raise
 
 
-def send_simple_text(
-    webhook_url: str, content: str, username: str = "ANAトクたび監視", dry_run: bool = False
-) -> None:
+def send_simple_text(webhook_url: str, content: str, username: str = "ANAトクたび監視", dry_run: bool = False) -> None:
     payload = {"username": username, "content": content}
     if dry_run:
         print(json.dumps(payload, ensure_ascii=False, indent=2))

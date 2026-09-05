@@ -58,9 +58,7 @@ class LoggingConfig(BaseModel):
 class AppConfig(BaseModel):
     timezone: str = "Asia/Tokyo"
     campaign_url: str = "https://www.ana.co.jp/ja/jp/guide/amc/award/domestic/toku-tabi/"
-    availability_mode: Literal["safe_link_only", "browser_public_only", "custom_api"] = (
-        "safe_link_only"
-    )
+    availability_mode: Literal["safe_link_only", "browser_public_only", "custom_api"] = "safe_link_only"
     monitor: MonitorConfig = Field(default_factory=MonitorConfig)
     schedule: ScheduleConfig = Field(default_factory=ScheduleConfig)
     rate_limit: RateLimitConfig = Field(default_factory=RateLimitConfig)

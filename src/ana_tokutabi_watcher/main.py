@@ -79,9 +79,7 @@ def fetch_routes(
         raise typer.Exit(1) from e
 
     parsed = parse_campaign_html(html)
-    normalized = normalize_all_osaka_routes(
-        parsed.routes_by_miles, parsed.travel_start, parsed.travel_end
-    )
+    normalized = normalize_all_osaka_routes(parsed.routes_by_miles, parsed.travel_start, parsed.travel_end)
 
     # フィルタ: allowlist / blocklist
     allow = set(cfg.monitor.destination_allowlist)
@@ -90,15 +88,13 @@ def fetch_routes(
         normalized = [
             r
             for r in normalized
-            if any(code in allow for code in r["destination_airports"])
-            or r["destination_name"] in allow
+            if any(code in allow for code in r["destination_airports"]) or r["destination_name"] in allow
         ]
     if block:
         normalized = [
             r
             for r in normalized
-            if not any(code in block for code in r["destination_airports"])
-            and r["destination_name"] not in block
+            if not any(code in block for code in r["destination_airports"]) and r["destination_name"] not in block
         ]
 
     log.info(  # type: ignore[attr-defined]
@@ -124,9 +120,7 @@ def fetch_routes(
                 {
                     "origin": r["origin_area"],
                     "destination": r["destination_name"],
-                    "destination_code": r["destination_airports"][0]
-                    if r["destination_airports"]
-                    else None,
+                    "destination_code": r["destination_airports"][0] if r["destination_airports"] else None,
                     "miles": r["miles"],
                     "route_text": r["route_text"],
                 }
@@ -213,8 +207,8 @@ def check_availability(
 
         # チェッカー選択
         if cfg.availability_mode == "browser_public_only":
-            checker: SafeLinkOnlyAvailabilityChecker | BrowserAvailabilityChecker = (
-                BrowserAvailabilityChecker(enabled=False)
+            checker: SafeLinkOnlyAvailabilityChecker | BrowserAvailabilityChecker = BrowserAvailabilityChecker(
+                enabled=False
             )
             is_safe = True  # デフォルト無効なのでsafe扱い
         elif cfg.availability_mode == "custom_api":
@@ -277,9 +271,7 @@ def check_availability(
                             miles=route.miles,
                         )
                         current_status = result.status
-                        if not should_notify(
-                            session, key, current_status, resend_after_hours=resend_hours
-                        ):
+                        if not should_notify(session, key, current_status, resend_after_hours=resend_hours):
                             log.info("skip_duplicate", key=key[:12])  # type: ignore[attr-defined]
                             continue
 
@@ -287,9 +279,7 @@ def check_availability(
                             log.info("max_notifications_per_run_reached", max_n=max_n)  # type: ignore[attr-defined]
                             break
 
-                        payload = build_discord_payload(
-                            result, username=username, is_safe_mode=is_safe
-                        )
+                        payload = build_discord_payload(result, username=username, is_safe_mode=is_safe)
                         if dry_run or cfg.monitor.max_notifications_per_run == 0:
                             print(json.dumps(payload, ensure_ascii=False, indent=2))
                         else:
