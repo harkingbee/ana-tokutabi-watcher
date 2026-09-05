@@ -379,6 +379,10 @@ def check_availability(
 
                             payload = build_discord_payload(result, username=username, is_safe_mode=is_safe)
                             if dry_run or cfg.monitor.max_notifications_per_run == 0:
+                                # dry-runは「送信予定の内容を見るだけ」の非破壊プレビューであるべきなので、
+                                # ここで mark_notified を呼ぶと本番実行時に「送信済み」と誤認され、
+                                # 実際には一度もDiscordに届いていないのに resend_after_hours の間
+                                # 抑制され続けてしまう（実際に発生した不具合）。そのため状態は変更しない。
                                 print(json.dumps(payload, ensure_ascii=False, indent=2))
                             else:
                                 if cfg.discord.enabled:
@@ -396,7 +400,8 @@ def check_availability(
                                 else:
                                     print(json.dumps(payload, ensure_ascii=False, indent=2))
 
-                            mark_notified(session, key, current_status)
+                                mark_notified(session, key, current_status)
+
                             sent += 1
 
                             if min_sleep > 0 and not dry_run:
